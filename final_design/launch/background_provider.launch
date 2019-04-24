@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+
+
+<launch>
+    <arg name="is_using_simple_world" default="false"/>
+    <arg name="headless" default="false"/>
+    <arg name="is_using_official_vision" default="true"/>
+    <arg name="is_recording_data" default="true"/>
+
+
+    <include file="$(find dbw_mkz_gazebo)/launch/dbw_mkz_gazebo.launch">
+        <arg name="use_camera_control" value="true" />
+
+        <arg name="world_name" value="$(find my_launch_car_sim)/worlds/empty_world.world" if= "$(arg is_using_simple_world)"/>
+        <arg name="sim_param_file" value="$(find final_design)/yaml/start_point.yaml" if = "$(arg is_using_simple_world)"/>
+
+        <!-- <arg name="world_name" value="$(find dbw_mkz_gazebo)/worlds/test_track.world" unless="$(arg is_using_simple_world)" /> -->
+        <arg name="world_name" value="$(find my_launch_car_sim)/worlds/large_world.world" unless="$(arg is_using_simple_world)" />
+        <arg name="sim_param_file" value="$(find dbw_mkz_gazebo)/yaml/single_vehicle_test_track.yaml" unless="$(arg is_using_simple_world)" />
+        <arg name="headless" value="$(arg headless)" />
+    </include>
+
+    <node pkg = "final_design" type = "route_publisher" name = "route_publisher" output="screen"
+            if="$(arg is_using_simple_world)">
+        <param name="path_type" type="string" value="sine"/>
+    </node>
+
+    <include file="$(find dbw_mkz_vision_sim)/launch/lane_detection.launch" 
+            if="$(eval arg('is_using_official_vision') and not arg ('is_using_simple_world'))"/>
+
+    <node pkg = "my_launch_car_sim" type = "lane_detector" name = "lane_detector"
+            if="$(eval (not arg('is_using_official_vision')) and not arg ('is_using_simple_world'))"/>
+    
+    <node pkg = "system_identification_car" type = "input_output_listener.py" name = "input_output_listener" output="screen"
+            if = "$(arg is_recording_data)"/>
+
+    <node pkg = "rviz" type = "rviz" name = "rviz" unless="$(arg is_using_official_vision)" args="-d $(find final_design)/rviz/test_rviz.rviz" />/>
+
+</launch>

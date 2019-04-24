@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+
+
+<!-- Depreciated -->
+<launch>
+    <include file="$(find dbw_mkz_gazebo)/launch/dbw_mkz_gazebo.launch">
+        <arg name="use_camera_control" value="true" />
+        <arg name="world_name" value="$(find my_launch_car_sim)/worlds/empty_world.world" />
+        <arg name="sim_param_file" value="$(find final_design)/yaml/start_point.yaml" />
+        <arg name="headless" value="false" />
+    </include>
+
+    <!--image_processing pipeline output target_path -->
+    <!-- <include file="$(find final_design)/launch/route_launcher.launch" /> -->
+    <node pkg = "rviz" type = "rviz" name = "rviz"/>
+    <!--given car position and target_path get command -->
+    <node pkg = "my_launch_car_sim" type = "path_follower" name = "path_following" />
+
+    <!-- <node ns="vehicle" pkg="dbw_mkz_vision_sim" type="path_following_node" name="path_following" /> -->
+
+    <include file="$(find my_launch_car_sim)/launch/my_dbw.launch">
+        <arg name="live" value="false" />
+        <arg name="load_urdf" value="false" />
+        <arg name="can_ns" value="can_bus_dbw" />
+    </include>
+</launch>

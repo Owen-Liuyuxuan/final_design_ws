@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<launch>
+    <include file="$(find dbw_mkz_gazebo)/launch/dbw_mkz_gazebo.launch">
+        <arg name="use_camera_control" value="true" />
+        <arg name="world_name" value="$(find my_launch_car_sim)/worlds/empty_world.world" />
+        <arg name="sim_param_file" value="$(find system_identification_car)/yaml/original_start_position.yaml" />
+        <arg name="headless" value="false" />
+    </include>
+
+    <node pkg = "system_identification_car" type = "random_driver.py" name = "random_driver"/>
+
+    <node pkg = "system_identification_car" type = "input_output_listener.py" name = "data_listener" output = "screen"/>
+
+    <include file="$(find my_launch_car_sim)/launch/my_dbw.launch">
+        <arg name="live" value="false" />
+        <arg name="load_urdf" value="false" />
+        <arg name="can_ns" value="can_bus_dbw" />
+    </include>
+</launch>

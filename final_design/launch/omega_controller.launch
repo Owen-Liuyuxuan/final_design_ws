@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+
+<!-- 
+    dbw_mkz_gazebo and dbw_mkz_vision_sim has to be downloaded manually using 
+    command sudo apt install ros-kinetic-dbw-mkz-gazebo  ros-kinetic-dbw-mkz-vision-sim
+    
+    other package can be downloaded directly according to the website
+-->
+<launch>
+    <arg name="is_using_simple_world" default="false"/>
+    <arg name="headless" default="true"/>
+    <arg name="is_using_official_vision" default="false"/>
+    <arg name="is_recording_data" default = "true"/>
+    <arg name="is_using_adaptive_MPC" default="true"/>
+    <arg name="twist_controller_type" default="proposed"/> <!-- pid, official, proposed --> 
+    <arg name="is_noise_involved" default="true"/>
+
+    <include file="$(find final_design)/launch/background_provider.launch">
+        <arg name="is_using_simple_world" value="$(arg is_using_simple_world)"/>
+        <arg name="headless" value="$(arg headless)"/>
+        <arg name="is_using_official_vision" value="$(arg is_using_official_vision)"/>
+        <arg name="is_recording_data" value = "$(arg is_recording_data)"/>
+    </include>
+
+    <include file="$(find final_design)/launch/MPC_launcher.launch">
+        <arg name="is_using_adaptive_MPC" value="$(arg is_using_adaptive_MPC)"/>
+        <arg name="is_noise_involved" value="$(arg is_noise_involved)"/>
+    </include>
+
+    <include file="$(find final_design)/launch/omega_dbw.launch">
+        <arg name="controller_type" value="$(arg twist_controller_type)"/>
+        <arg name="controller_path" value="$(find final_design)/params/miu_synthesis_controller/"/>
+        <arg name="is_noise_involved" value="$(arg is_noise_involved)"/>
+    </include>
+</launch>

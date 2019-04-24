@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+
+
+<launch>
+    <!--given car position and target_path get command -->
+    <node pkg = "final_design" type = "route_publisher" name = "route_publisher" output="screen">
+        <param name="path_type" type="string" value="sine"/>
+    </node>
+
+    <node pkg = "system_identification_car" type = "input_output_listener.py" name = "input_output_listener" output="screen"/>
+</launch>

@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+
+
+<launch>
+
+    <arg name="is_using_adaptive_MPC" default="true"/>
+    <arg name="is_noise_involved" default="true"/>
+
+
+    <node pkg = "my_launch_car_sim" type = "path_follower" name = "path_following" unless="$(arg is_using_adaptive_MPC)">
+        <remap from="/vehicle/imu/data_raw" to="/processed/imu/data_raw" if="$(arg is_noise_involved)"/>
+    </node>
+    <node pkg = "final_design" type = "new_path_follower" name = "path_following" if="$(arg is_using_adaptive_MPC)" output="screen">
+        <remap from="/vehicle/imu/data_raw" to="/processed/imu/data_raw" if="$(arg is_noise_involved)"/>
+    </node>
+</launch>
